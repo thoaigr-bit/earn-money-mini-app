@@ -99,6 +99,20 @@ function sync(){
 }
 function toast(t){let e=document.getElementById("toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",1800)}
 function earn(n){points+=n;sync();toast("🎉 +"+n+" điểm")}
+ function dailyCheckin(){
+  const today=new Date().toISOString().slice(0,10);
+  const last=localStorage.getItem("dailyCheckin");
+
+  if(last===today){
+    toast("⏰ Hôm nay bạn đã điểm danh rồi!");
+    return;
+  }
+
+  points+=100;
+  localStorage.setItem("dailyCheckin",today);
+  sync();
+  toast("🎉 Điểm danh thành công: +100 điểm");
+}
 function watchDemo(){const n=Math.floor(Math.random()*251)+50;earn(n);toast("📺 Quảng cáo demo hoàn thành: +"+n+" điểm")}
 function go(id,btn){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn?.tagName==="BUTTON")btn.classList.add("active");}
 function getRefLink(){return "https://t.me/EarnMoneyVip_bot?start=ref_"+(u?.id||"demo")}
