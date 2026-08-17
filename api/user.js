@@ -11,7 +11,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { telegram_id, username } = req.body;
+    const {
+      telegram_id,
+      username,
+      add_points = 0
+    } = req.body;
 
     if (!telegram_id) {
       return res.status(400).json({
@@ -20,19 +24,24 @@ export default async function handler(req, res) {
       });
     }
 
+    const add = Math.max(0, Number(add_points) || 0);
+
     const result = await pool.query(
-      `INSERT INTO users (telegram_id, username)
-       VALUES ($1, $2)
+      `INSERT INTO users (telegram_id, username, points)
+       VALUES ($1, $2, $3)
        ON CONFLICT (telegram_id)
-       DO UPDATE SET username = EXCLUDED.username
+       DO UPDATE SET
+         username = EXCLUDED.username,
+         points = users.points + $3
        RETURNING telegram_id, username, points, last_checkin`,
-      [telegram_id, username || null]
+      [telegram_id, username || null, add]
     );
 
     return res.status(200).json({
       ok: true,
       user: result.rows[0]
     });
+
   } catch (error) {
     console.error(error);
 
