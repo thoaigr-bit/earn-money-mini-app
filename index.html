@@ -165,8 +165,32 @@ function sync(){
  document.getElementById("unlock").textContent=ok?"Đã mở khóa":"Đang khóa";document.getElementById("unlock").className=ok?"good":"bad";
  const b=document.getElementById("withdrawBtn");b.disabled=!ok;b.textContent=ok?"🔓 Rút tiền":"🔒 Chưa đủ điều kiện";
 }
-function toast(t){let e=document.getElementById("toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",1800)}
-function earn(n){points+=n;sync();toast("🎉 +"+n+" điểm")}
+function toast(t){let e=document.getElementById("toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",1800)}async function earn(n){
+  try{
+    const res=await fetch("/api/user",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        telegram_id:u?.id,
+        username:u?.username||u?.first_name||"",
+        add_points:n
+      })
+    });
+
+    const data=await res.json();
+
+    if(data.ok && data.user){
+      points=Number(data.user.points)||0;
+      sync();
+      toast("🎉 +"+n+" điểm");
+    }else{
+      toast("❌ Không thể lưu điểm");
+    }
+  }catch(e){
+    console.error(e);
+    toast("❌ Lỗi kết nối");
+  }
+}
  function dailyCheckin(){
   const today=new Date().toISOString().slice(0,10);
   const last=localStorage.getItem("dailyCheckin");
