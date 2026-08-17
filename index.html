@@ -175,7 +175,6 @@ async function earn(n){
 
     if(data.ok && data.user){
       points=Number(data.user.points)||0;
-localStorage.setItem("dailyCheckin",today);
 sync();
       toast("🎉 +"+n+" điểm");
     }else{
