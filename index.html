@@ -154,15 +154,7 @@ function toast(t){
 
 loadUser();
 function sync(){
- document.getElementById("p1").textContent=fmt(points)+" điểm";document.getElementById("m1").textContent="≈ "+fmt(points)+" VNĐ";
- document.getElementById("p2").textContent=fmt(points)+" VNĐ";document.getElementById("p3").textContent=fmt(points)+" điểm";
- ["r1","r2","r3"].forEach(id=>document.getElementById(id).textContent=refs+"/3");
- ["bar1","bar2"].forEach(id=>document.getElementById(id).style.width=Math.min(refs/3*100,100)+"%");
- document.getElementById("bar3").style.width=Math.min(points/5000*100,100)+"%";
- const mok=points>=5000,rok=refs>=3,ok=mok&&rok;
- document.getElementById("moneyok").textContent=mok?"✅":"❌";document.getElementById("refok").textContent=rok?"✅":"❌";
- document.getElementById("unlock").textContent=ok?"Đã mở khóa":"Đang khóa";document.getElementById("unlock").className=ok?"good":"bad";
- const b=document.getElementById("withdrawBtn");b.disabled=!ok;b.textContent=ok?"🔓 Rút tiền":"🔒 Chưa đủ điều kiện";
+kiện";
 }
 function toast(t){let e=document.getElementById("toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",1800)}async function earn(n){
   try{
