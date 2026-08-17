@@ -153,18 +153,21 @@ function toast(t){
 }
 
 loadUser();
-function sync(){
-kiện";
-}
-function toast(t){let e=document.getElementById("toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",1800)}async function earn(n){
+
+async function earn(n){
   try{
-    const res=await fetch("/api/user",{
+    if(!u?.id){
+      toast("❌ Không lấy được Telegram ID");
+      return;
+    }
+
+    const res=await fetch("/api/earn",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({
-        telegram_id:u?.id,
-        username:u?.username||u?.first_name||"",
-        add_points:n
+        telegram_id:u.id,
+        username:u.username||u.first_name||"",
+        points:n
       })
     });
 
@@ -175,14 +178,15 @@ function toast(t){let e=document.getElementById("toast");e.textContent=t;e.style
       sync();
       toast("🎉 +"+n+" điểm");
     }else{
-      toast("❌ Không thể lưu điểm");
+      toast("❌ "+(data.error||"Không thể lưu điểm"));
     }
   }catch(e){
-    console.error(e);
+    console.error("Earn error:",e);
     toast("❌ Lỗi kết nối");
   }
 }
- function dailyCheckin(){
+
+function dailyCheckin(){
   const today=new Date().toISOString().slice(0,10);
   const last=localStorage.getItem("dailyCheckin");
 
@@ -196,7 +200,12 @@ function toast(t){let e=document.getElementById("toast");e.textContent=t;e.style
   sync();
   toast("🎉 Điểm danh thành công: +100 điểm");
 }
-function watchDemo(){const n=Math.floor(Math.random()*251)+50;earn(n);toast("📺 Quảng cáo demo hoàn thành: +"+n+" điểm")}
+
+function watchDemo(){
+  const n=Math.floor(Math.random()*251)+50;
+  earn(n);
+  toast("📺 Quảng cáo demo hoàn thành: +"+n+" điểm");
+}
 function go(id,btn){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn?.tagName==="BUTTON")btn.classList.add("active");}
 function getRefLink(){return "https://t.me/EarnMoneyVip_bot?start=ref_"+(u?.id||"demo")}
 function copyRef(){const link=getRefLink(); if(navigator.clipboard?.writeText){navigator.clipboard.writeText(link).then(()=>toast("📋 Đã sao chép link REF"));}else{toast("Hãy nhấn giữ link để sao chép")}}
