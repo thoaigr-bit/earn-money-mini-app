@@ -188,8 +188,14 @@ async function earn(n){
 
 async function dailyCheckin(){
   const today=new Date().toISOString().slice(0,10);
+const last=localStorage.getItem("dailyCheckin");
 
-  try{
+if(last===today){
+  toast("⏰ Hôm nay bạn đã điểm danh rồi!");
+  return;
+}
+
+try{
     if(!u?.id){
       toast("❌ Không lấy được Telegram ID");
       return;
