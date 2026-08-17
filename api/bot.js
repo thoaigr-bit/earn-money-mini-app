@@ -1,4 +1,13 @@
-export default async function handler(req, res) {
+import pg from "pg";
+
+const { Pool } = pg;
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(200).json({
       ok: true,
