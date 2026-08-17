@@ -24,6 +24,12 @@ export default async function handler(req, res) {
       const text = update.message.text || "";
 
       if (text === "/start" || text.startsWith("/start ")) {
+     await pool.query(
+  `INSERT INTO users (telegram_id, points)
+   VALUES ($1, 0)
+   ON CONFLICT (telegram_id) DO NOTHING`,
+  [chatId]
+);
         const token = process.env.BOT_TOKEN;
 
         if (!token) {
