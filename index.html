@@ -213,9 +213,11 @@ try{
 
     const data=await res.json();
 
-    if(data.ok && data.user){
-      points=Number(data.user.points)||0;
-      sync();
+    ifif(data.ok && data.user){
+  points=Number(data.user.points)||0;
+  localStorage.setItem("dailyCheckin",today);
+  sync();
+  toast("🎉 Điểm danh thành công: +100 điểm");
       toast("🎉 Điểm danh thành công: +100 điểm");
     }else{
       toast("❌ "+(data.error||"Không thể lưu điểm"));
