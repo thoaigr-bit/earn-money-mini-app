@@ -172,8 +172,15 @@ async function earn(n){
     });
 
     const data=await res.json();
-
-    if(data.ok && data.user){
+if(data.ok && data.user){
+  points=Number(data.user.points)||0;
+  sync();
+  toast("🎉 Điểm danh thành công: +100 điểm");
+}else if(data.already_checked_in){
+  points=Number(data.user?.points)||points;
+  sync();
+  toast("⏰ Hôm nay bạn đã điểm danh rồi!");
+ if(data.ok && data.user){
       points=Number(data.user.points)||0;
 sync();
       toast("🎉 +"+n+" điểm");
