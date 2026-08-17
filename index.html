@@ -86,6 +86,73 @@ const tg=window.Telegram?.WebApp;if(tg){tg.ready();tg.expand()}
 const u=tg?.initDataUnsafe?.user;const nm=u?.first_name||u?.username||"Bạn";
 document.querySelectorAll("#name,#aname").forEach(e=>e.textContent=nm);document.getElementById("uid").textContent=u?.id||"demo";
 let points=0,refs=0;
+
+async function loadUser(){
+  if(!u?.id) return;
+
+  try{
+    const res=await fetch("/api/user",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        telegram_id:u.id,
+        username:u.username||u.first_name||""
+      })
+    });
+
+    const data=await res.json();
+
+    if(data.ok && data.user){
+      points=Number(data.user.points)||0;
+      sync();
+    }
+  }catch(e){
+    console.error("Load user error:",e);
+  }
+}
+
+const fmt=n=>n.toLocaleString("vi-VN");
+
+function sync(){
+ document.getElementById("p1").textContent=fmt(points)+" điểm";
+ document.getElementById("m1").textContent="≈ "+fmt(points)+" VNĐ";
+ document.getElementById("p2").textContent=fmt(points)+" VNĐ";
+ document.getElementById("p3").textContent=fmt(points)+" điểm";
+
+ ["r1","r2","r3"].forEach(id=>{
+   document.getElementById(id).textContent=refs+"/3";
+ });
+
+ ["bar1","bar2"].forEach(id=>{
+   document.getElementById(id).style.width=
+   Math.min(refs/3*100,100)+"%";
+ });
+
+ document.getElementById("bar3").style.width=
+ Math.min(points/5000*100,100)+"%";
+
+ const mok=points>=5000;
+ const rok=refs>=3;
+ const ok=mok&&rok;
+
+ document.getElementById("moneyok").textContent=mok?"✅":"❌";
+ document.getElementById("refok").textContent=rok?"✅":"❌";
+ document.getElementById("unlock").textContent=
+ ok?"Đã mở khóa":"Đang khóa";
+
+ const b=document.getElementById("withdrawBtn");
+ b.disabled=!ok;
+ b.textContent=ok?"🔓 Rút tiền":"🔒 Chưa đủ điều kiện";
+}
+
+function toast(t){
+ let e=document.getElementById("toast");
+ e.textContent=t;
+ e.style.display="block";
+ setTimeout(()=>e.style.display="none",1800);
+}
+
+loadUser();
 const fmt=n=>n.toLocaleString("vi-VN");
 function sync(){
  document.getElementById("p1").textContent=fmt(points)+" điểm";document.getElementById("m1").textContent="≈ "+fmt(points)+" VNĐ";
