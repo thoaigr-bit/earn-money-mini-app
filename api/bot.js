@@ -7,7 +7,8 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false
   }
-});export default async function handler(req, res) {
+});
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(200).json({
       ok: true,
