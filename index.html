@@ -187,20 +187,12 @@ sync();
 }
 
 async function dailyCheckin(){
-  const today=new Date().toISOString().slice(0,10);
-const last=localStorage.getItem("dailyCheckin");
-
-if(last===today){
-  toast("⏰ Hôm nay bạn đã điểm danh rồi!");
-  return;
-}
-
+  
 try{
     if(!u?.id){
       toast("❌ Không lấy được Telegram ID");
       return;
     }
-
     const res=await fetch("/api/earn",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
