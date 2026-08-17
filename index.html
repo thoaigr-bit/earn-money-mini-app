@@ -186,25 +186,39 @@ async function earn(n){
   }
 }
 
-function dailyCheckin(){
+async function dailyCheckin(){
   const today=new Date().toISOString().slice(0,10);
-  const last=localStorage.getItem("dailyCheckin");
 
-  if(last===today){
-    toast("⏰ Hôm nay bạn đã điểm danh rồi!");
-    return;
+  try{
+    if(!u?.id){
+      toast("❌ Không lấy được Telegram ID");
+      return;
+    }
+
+    const res=await fetch("/api/earn",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        telegram_id:u.id,
+        username:u.username||u.first_name||"",
+        points:100
+      })
+    });
+
+    const data=await res.json();
+
+    if(data.ok && data.user){
+      points=Number(data.user.points)||0;
+      sync();
+      toast("🎉 Điểm danh thành công: +100 điểm");
+    }else{
+      toast("❌ "+(data.error||"Không thể lưu điểm"));
+    }
+
+  }catch(e){
+    console.error("Checkin error:",e);
+    toast("❌ Lỗi kết nối");
   }
-
-  points+=100;
-  localStorage.setItem("dailyCheckin",today);
-  sync();
-  toast("🎉 Điểm danh thành công: +100 điểm");
-}
-
-function watchDemo(){
-  const n=Math.floor(Math.random()*251)+50;
-  earn(n);
-  toast("📺 Quảng cáo demo hoàn thành: +"+n+" điểm");
 }
 function go(id,btn){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn?.tagName==="BUTTON")btn.classList.add("active");}
 function getRefLink(){return "https://t.me/EarnMoneyVip_bot?start=ref_"+(u?.id||"demo")}
